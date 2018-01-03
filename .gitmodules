@@ -1,0 +1,3 @@
+[submodule "Rotice_Node/Rotice"]
+	path = Rotice_Node/Rotice
+	url = https://git.heroku.com/rotice.git
