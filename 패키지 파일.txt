@@ -1,0 +1,23 @@
+package.json
+//"name": "node-js-getting-started",
+  //"version": "0.3.0",
+  //"description": "A sample Node.js app using Express 4",
+
+//"main": "index.js",
+  //"scripts": {
+    //"start": "node index.js",
+    //"test": "node test.js"
+  //},
+
+디펜던시 부분 : 
+    //"ejs": "^2.5.6",
+    //"express": "^4.15.2"
+
+
+
+
+package-lock.json
+
+
+  //"name": "node-js-getting-started",
+//"version": "0.3.0",
