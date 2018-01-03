@@ -7,12 +7,11 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.IOException;
 
 
 public class Wind_List_Activity extends AppCompatActivity {
@@ -21,22 +20,27 @@ public class Wind_List_Activity extends AppCompatActivity {
     TextView textView;
     String htmlPageUrl = "http://wind.gachon.ac.kr/client/program/programList.do?programType=newProgram";
     String Content = "";
+    String jvScript = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wind_list);
         //textView = (TextView)findViewById(R.id.wind_view);
+
+
         webView = (WebView) findViewById(R.id.wind_view);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
         webView.setBackgroundColor(0);
-        webView.loadUrl(htmlPageUrl);
-        //JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-        //jsoupAsyncTask.execute();
+        webView.getSettings().setJavaScriptEnabled(true);
+//        //webView.loadUrl(htmlPageUrl);
+        JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask.execute();
     }
 
 
-    private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class JsoupAsyncTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -44,24 +48,43 @@ public class Wind_List_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
+            String result = "";
             try {
-                Document doc = Jsoup.connect(htmlPageUrl).get();
-                Elements links = doc.select("html");
+                Connection.Response response = Jsoup.connect(htmlPageUrl)
+                        .method(Connection.Method.GET)
+                        .execute();
+                Document doc = response.parse();
+
+                //Document doc = Jsoup.connect(htmlPageUrl).get();
+                Elements links = doc.select(".list_con");
+                Elements script = doc.select("#cBody + script");
                 for(Element element : links){
-                    Content += element.html().trim() + "\n";
+                    result += element.html().trim() + "\n";
                 }
-                Log.v("html!", Content);
-            } catch (IOException e) {
+                for(Element element : script){
+                    jvScript += element.html().trim() + "\n";
+                }
+//                Log.v("html!", Content);
+                Log.v("Script!",jvScript);
+                //InputStream is = getInputStreamFromUrl(htmlPageUrl);
+
+                //result = convertInputStreamToString(is);//이 함수는 이 페이지를 참고
+
+
+                Log.v("html!", result);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
-            webView.loadData(Content,"text/html","UTF-8");
-            //textView.setText(Content);
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            webView.loadData(result,"text/html","UTF-8");
+            webView.loadUrl("javascript:[script "+jvScript+"]");
         }
     }
 }
