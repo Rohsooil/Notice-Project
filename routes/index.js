@@ -21,7 +21,7 @@ router.get('/', function (req, res, next) {
         report.findElement(By.css('#cBody > div > div > form > div > div.tableWrap.rowPro > table > tbody')).getAttribute("innerHTML").then(function (profile) {
             console.log(profile);
             res.render('index', {
-                title: 'Express'
+                title: profile
             });
         });
     }
