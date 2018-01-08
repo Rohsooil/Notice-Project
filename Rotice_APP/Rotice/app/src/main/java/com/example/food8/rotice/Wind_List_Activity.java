@@ -55,7 +55,6 @@ public class Wind_List_Activity extends AppCompatActivity {
                         .method(Connection.Method.GET)
                         .execute();
                 Document doc = response.parse();
-
                 //Document doc = Jsoup.connect(htmlPageUrl).get();
                 Elements links = doc.select(".list_con");
                 Elements script = doc.select("#cBody + script");
